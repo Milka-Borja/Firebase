@@ -21,6 +21,7 @@ export default function PantallaVerificarCorreo() {
   } = useSesion();
   const [errorGeneral, setErrorGeneral] = useState<string | null>(null);
   const [mensajeExito, setMensajeExito] = useState<string | null>(null);
+  const [mensajeEstado, setMensajeEstado] = useState<string | null>(null);
   const [actualizando, setActualizando] = useState(false);
   const [reenviando, setReenviando] = useState(false);
   const [saliendo, setSaliendo] = useState(false);
@@ -29,8 +30,14 @@ export default function PantallaVerificarCorreo() {
     setActualizando(true);
     setErrorGeneral(null);
     setMensajeExito(null);
+    setMensajeEstado(null);
     try {
-      await actualizarVerificacionCorreo();
+      const verificado = await actualizarVerificacionCorreo();
+      if (!verificado) {
+        setMensajeEstado(
+          'Aún no se confirma la verificación. Si acabas de abrir el enlace, espera un momento y vuelve a comprobar.',
+        );
+      }
     } catch (error) {
       setErrorGeneral(mensajeDeError(error));
     } finally {
@@ -42,6 +49,7 @@ export default function PantallaVerificarCorreo() {
     setReenviando(true);
     setErrorGeneral(null);
     setMensajeExito(null);
+    setMensajeEstado(null);
     try {
       await reenviarVerificacionCorreo();
       setMensajeExito('Enviamos otro enlace de verificación a tu correo.');
@@ -71,6 +79,7 @@ export default function PantallaVerificarCorreo() {
       ) : null}
       {errorGeneral ? <Aviso tipo="error" mensaje={errorGeneral} /> : null}
       {mensajeExito ? <Aviso tipo="exito" mensaje={mensajeExito} /> : null}
+      {mensajeEstado ? <Text style={styles.estado}>{mensajeEstado}</Text> : null}
 
       <View style={styles.instrucciones}>
         <Text style={styles.texto}>
@@ -118,5 +127,11 @@ const styles = StyleSheet.create({
     color: colores.grafito,
     fontFamily: fuentes.textoMedio,
     fontSize: 16,
+  },
+  estado: {
+    color: colores.lapiz,
+    fontFamily: fuentes.texto,
+    fontSize: 14,
+    lineHeight: 20,
   },
 });

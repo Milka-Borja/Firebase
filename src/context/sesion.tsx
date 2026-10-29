@@ -34,7 +34,7 @@ type ValorSesion = {
   cargando: boolean;
   iniciarSesion: (correo: string, clave: string) => Promise<void>;
   registrarse: (nombre: string, correo: string, clave: string) => Promise<void>;
-  actualizarVerificacionCorreo: () => Promise<void>;
+  actualizarVerificacionCorreo: () => Promise<boolean>;
   reenviarVerificacionCorreo: () => Promise<void>;
   errorEnvioVerificacion: unknown | null;
   enviarCorreoRecuperacion: (correo: string) => Promise<void>;
@@ -108,6 +108,7 @@ export function ProveedorSesion({ children }: { children: ReactNode }) {
     setUsuario(actual);
     setNombre(actual.displayName);
     setCorreoVerificado(actual.emailVerified);
+    return actual.emailVerified;
   }
 
   async function reenviarVerificacionCorreo() {
